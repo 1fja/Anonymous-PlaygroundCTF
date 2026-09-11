@@ -7,6 +7,7 @@ I've started with a default reconnaissance using nmap:
 
 nmap -p- -sC -sV 10.67.156.126 --min-rate 10000
 
+```
 PORT   STATE SERVICE VERSION
 22/tcp open  ssh     OpenSSH 8.2p1 Ubuntu 4ubuntu0.13 (Ubuntu Linux; protocol 2.0)
 | ssh-hostkey: 
@@ -19,11 +20,13 @@ PORT   STATE SERVICE VERSION
 |_http-server-header: Apache/2.4.41 (Ubuntu)
 |_http-title: Proving Grounds
 Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
-
+```
 
 ### As we can see, we found a SSH port and a web port, but in robots.txt we can see a weird directory popping out
 
 And if we go to the website, we'll see the main page and 'operatives' tab. But it's kinda of irrelevant now
+
+# WEB
 
 ### Acessing the weird directory, we get a page saying 'Acess Denied'. But no worries! We can bypass that
 
