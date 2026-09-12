@@ -22,7 +22,7 @@ PORT   STATE SERVICE VERSION
 Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 ```
 
-### As we can see, we found a SSH port and a web port, but in robots.txt we can see a weird directory popping out
+### As we can see, we found a SSH port and a web port, but in robots.txt we can see a weird directory popping up
 
 And if we go to the website, we'll see the main page and 'operatives' tab. But it's kinda of irrelevant now
 
@@ -39,9 +39,8 @@ Going to the tryhackme page, we'll se a hint for our first flag and the hint is:
 
 "zA = a"
 
-With that hint, we'll create a python script that can decode that weird string. The python script I've used is this one, feel free to use:
-
-```python
+With that hint, we'll create a Python script that can decode that weird string. The **Python** script I've used is this one, feel free to use it:
+```
 import string
 
 alphabet = string.ascii_lowercase
@@ -83,12 +82,12 @@ After decrypting this string, we'll get the user and the password. We can use it
 
 ## SSH
 
-In magna directory, we can get our first flag.
-But inside of it, we can spot 2 files, one that is a note from spooky and the other one is "hacktheworld"
+In the magna directory, we can get our first flag.
 
-In the note, he says that he's working his skills in C, creating a type of R.E and malware thing, but he also says that we can break his file called hacktheworld
+But inside of it, we can spot 2 files, one that is a note from spooky and the other one is hacktheworld.
+In the note, he says that he's working on his skills in C, creating a type of R.E. (Reverse Engineering) and malware-related thing, but he also says that we can break his file called hacktheworld.
 
-For that, we can use the tools that we have in the machine, which will be radare2 and gdb
+For that, we can use the tools that we have on the machine, which will be radare2 and GDB.
 
 So...
 
@@ -96,12 +95,13 @@ So...
 
 This part takes a lot of time if you're not into binary exploitation.
 
-But, first of all, we need to verify what the code of this file says, so, we'll be using a R.E ***(reverse engineering)*** tool of our preference
+But, first of all, we need to verify what the code of this file says, so we'll be using an R.E ***(reverse engineering)*** tool of our preference
 
-Once you're in the C file's code, we can see that in the main fuction, we have a character limit of 64 bytes
-and in another function called 'call_bash', we can see that this fucntion calls the system and put /bin/bash, which will lead to our Privilege escalation
+Once we're in the C file's code, we can see that in the main function, we have a 64-byte buffer.
 
-So now, we'll try to "break" the file to identify the buffer capacity and get 'Segmentation Fault'
+In another function called call_bash, we can see that this function calls system() with /bin/sh, which will give us a shell as the spooky user.
+
+So now, we'll try to "break" the file to identify the buffer capacity and get a 'Segmentation Fault'
 
 The file breaks after 72 bytes (try it for yourself!):
 ``python -c "print('A'*72)" > something.txt``
@@ -118,7 +118,7 @@ run
 info functions
 ```
 
-Now, we'll search for "main" and "call_bash" again and we need to disassemble them to see what's really going on inside, so.. on gdb:
+Now, we'll search for "main" and "call_bash" again and we need to disassemble them to see what's really going on inside, so.. on GDB:
 
 `` disas main ``
 
@@ -133,26 +133,24 @@ After putting two breakpoints on these functions, let's run it on gdb with our "
 
 ``run < something.txt``
 
-you can type "c" and hit enter just one time
+you can type "c" (to continue) and hit enter just one time
 
-and then, type:
+then, type:
 
 ``info register``
 
-We can notice that RSI is kind of unusual of his original state
+We can notice that RSI is different from its original state.
 
-If you want to compare, try creating a file with 71 A's (bytes) and the other one with 72 A's (bytes)
-and veryfing the RSI with:
-
+If you want to compare, try creating a file with 71 A's (bytes) and another one with 72 A's (bytes), and verify the memory with:
 ``x/20x $rsi``
 
-See in the 2 column in the last row, the value is different, which is very good thing!
+We can see that the memory contents change when we go from 71 to 72 bytes, which is a good indication that we're overwriting data beyond the buffer.
 
-Now, we'll go to the call_bash function:
+Now, we'll go to the call_bash function.
 
-Using pdf @ sym.call_bash in radare2, We'll found that the function starts at 0x400657. Its first instruction is push rbp, followed by mov rbp, rsp at 0x400658.
+Using pdf @ sym.call_bash in radare2, we'll find that the function starts at 0x400657. Its first instruction is push rbp, followed by mov rbp, rsp at 0x400658.
 
-Our exploit will use 0x400658 as the return address, entering the function immediately after the push rbp instruction. The address must then be represented in little-endian byte order
+Our exploit will use 0x400658 as the return address, entering the function immediately after the push rbp instruction. The address must then be represented in Little Endian byte order.
 
 In our terminal (inside of the machine):
 
@@ -168,13 +166,13 @@ Now, we'll add more 2 extra zeros to our payload and a 'cat' command, to "trick"
 Finally! We escalated our privileges to the user spooky!
 
 ### Why it's not a horizontal privilege escalation?
-Because the user spooky actually have more privilege than the user magna, and the permission of the 'hacktheworld' file were from the user spooky, causing to spawn the shell of spooky
+Because the user spooky actually has more privileges than the user magna, and the hacktheworld file is owned by spooky, causing it to spawn a shell with spooky-related privileges.
 
 ### Now you have your 2nd flag! (go to /home/spooky, don't forget that, lol)
 
 # Privelege Escalation
 
-Now, we have something easy to do, you don't need a crazy exploit or LinPEAS for that.
+Now, we have something easy to do. You don't need a crazy exploit or LinPEAS for that.
 
 ### Recomendation: Try doing the privelege escalation rooms in TryHackMe (or even in other plataforms) and take notes, save these notes and make it a "checklist"
 
@@ -185,17 +183,16 @@ ls -la /etc/crontab
 cat /etc/crontab
 ```
 
-In the last line, we'll see that root copies all of spooky's files into /var/backup using tar
+In the last line, we'll see that root copies all of spooky's files into /var/backup using **tar**
 
 ## Using TAR
 verify the version:
-tar --version
+
+``tar --version``
 
 We'll see that the TAR version is 1.30
 
 If you want, you can try and search for exploits, but I did like this:
-
-
 
 ```
 echo '#!/bin/bash' > shell.sh
@@ -210,6 +207,7 @@ and then:
 touch -- --checkpoint=1
 touch -- '--checkpoint-action=exec=bash shell.sh'
 ```
+**The wildcard * in the cron job gets expanded by the shell before tar receives the arguments. Because of that, filenames beginning with -- can be interpreted as tar options.**
 
 ## Just wait and you'll have the root shell!
 ### Now you have all the flags! (/root/)
