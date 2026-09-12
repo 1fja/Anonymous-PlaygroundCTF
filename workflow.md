@@ -1,5 +1,5 @@
 # Workflow (or what we have learned, lol)
-
+``
 recon
  ↓
 web enumeration
@@ -35,3 +35,4 @@ wildcard expansion
 tar option injection
  ↓
 root
+``
