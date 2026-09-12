@@ -93,17 +93,19 @@ So...
 
 ## Binary exploitation
 
-This part takes a lot of time if you're not into binary exploitation.
+**This part takes a lot of time if you're not into binary exploitation.**
 
-But, first of all, we need to verify what the code of this file says, so we'll be using an R.E ***(reverse engineering)*** tool of our preference
 
-Once we're in the C file's code, we can see that in the main function, we have a 64-byte buffer.
+But, first of all, we need to verify what the code of this file says, so we'll be using an R.E ***(reverse engineering)*** tool of our preference.
 
-In another function called call_bash, we can see that this function calls system() with /bin/sh, which will give us a shell as the spooky user.
+
+Once we're in the C file's code, we can see that in the main function, we have a 64-byte buffer. In another function called 'call_bash', we can see that this function calls system() with /bin/sh, which will give us a shell as the spooky user.
+
 
 So now, we'll try to "break" the file to identify the buffer capacity and get a 'Segmentation Fault'
 
 The file breaks after 72 bytes (try it for yourself!):
+
 ``python -c "print('A'*72)" > something.txt``
 `` ./hacktheworld < something.txt``
 
