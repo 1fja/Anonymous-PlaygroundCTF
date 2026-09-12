@@ -107,6 +107,7 @@ So now, we'll try to "break" the file to identify the buffer capacity and get a 
 The file breaks after 72 bytes (try it for yourself!):
 
 ``python -c "print('A'*72)" > something.txt``
+
 `` ./hacktheworld < something.txt``
 
 By doing this, we can see that the C file returned an error and it's "Segmentation Fault", which is very goof for us
