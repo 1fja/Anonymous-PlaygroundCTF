@@ -215,3 +215,8 @@ touch -- '--checkpoint-action=exec=bash shell.sh'
 
 
 
+## Lessons Learned
+
+This room was a good reminder that knowing the concept is not the same as knowing how to execute it.
+
+I was able to identify most of the attack paths by myself, but I got stuck on some of the practical steps, especially during the binary exploitation.
