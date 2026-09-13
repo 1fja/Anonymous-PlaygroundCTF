@@ -151,7 +151,7 @@ We can see that the memory contents change when we go from 71 to 72 bytes, which
 
 Now, we'll go to the call_bash function.
 
-Using pdf @ sym.call_bash in radare2, we'll find that the function starts at 0x400657. Its first instruction is push rbp, followed by mov rbp, rsp at 0x400658.
+Using ``pdf @ sym.call_bash`` in radare2, we'll find that the function starts at 0x400657. Its first instruction is push rbp, followed by mov rbp, rsp at 0x400658.
 
 Our exploit will use 0x400658 as the return address, entering the function immediately after the push rbp instruction. The address must then be represented in Little Endian byte order.
 
